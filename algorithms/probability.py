@@ -12,8 +12,26 @@ def normalize(weights: dict) -> dict:
     - Conserve las claves y su orden; no modifique weights.
     - Rechace pesos negativos, no finitos, diccionarios vacíos y suma cero.
     """
-    # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    #TODO: Add your code here
+    
+    if not weights:
+        raise ValueError("Diccionario vacío")
+    if any(not math.isfinite(w) or w < 0 for w in weights.values()):
+        raise ValueError("Pesos negativos o no finitos")
+    total = sum(weights.values())
+    if total == 0:
+        raise ValueError("La suma de los pesos es cero")
+    pesos = 0
+    for resultado in weights.keys():
+        pesos += weights[resultado]
+    
+    dicc_resultado = {}
+    for resultado in weights.keys():
+        dicc_resultado[resultado] = weights[resultado]/pesos
+            
+    
+    return dicc_resultado
+    #raise NotImplementedError("Complete este bloque TODO")
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
@@ -37,8 +55,12 @@ def expected_utility(distribution: dict, utilities: dict) -> float:
         raise ValueError("La distribución debe sumar uno")
     if any(not math.isfinite(u) for u in utilities.values()):
         raise ValueError("Utilidades no finitas")
-    # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    
+    utilidad_esperada = 0
+    for resultado in distribution.keys():
+        utilidad_esperada += distribution[resultado] * utilities[resultado]
+    return utilidad_esperada
+    #raise NotImplementedError("Complete este bloque TODO")
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
@@ -52,10 +74,36 @@ def best_action(distribution: dict, actions: dict) -> tuple[str, dict]:
     Tips:
     - actions asocia cada acción con su tabla de utilidades.
     - Reutilice expected_utility y conserve la primera acción en los empates.
-    """
-    # Validación de las acciones; no modificar.
+    
+    
+    Primera version:
+    
     if not actions:
-        raise ValueError("Se requiere al menos una acción")
-    # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+            raise ValueError("Se requiere al menos una acción")
+        
+        mejor_accion = ''
+        valor_mejor_accion = 0
+        for accion in actions.keys():
+            utilidad_esperada = expected_utility(actions[accion], distribution)
+            if utilidad_esperada > valor_mejor_accion:
+                mejor_accion = accion
+                valor_mejor_accion = utilidad_esperada
+        return {mejor_accion : valor_mejor_accion}
+        
+    Iteracion Con Ia:
+    
+    
+    """
+    
+    values = {}
+    for accion, utilidades in actions.items():
+        values[accion] = expected_utility(distribution, utilidades)
+    mejor = next(iter(values))
+    for accion, eu in values.items():
+        if eu > values[mejor]:
+            mejor = accion
+    return mejor, values
+    # Validación de las acciones; no modificar.
+    
+    #raise NotImplementedError("Complete este bloque TODO")
     # FIN DEL BLOQUE DEL ESTUDIANTE
