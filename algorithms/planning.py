@@ -74,6 +74,26 @@ def extract_policy(mdp, values):
     - Reutilice action_value: no basta elegir el vecino de mayor valor.
     - Respete mdp.actions: desempate N, E, S, W conservando el primero.
     """
-    # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
-    # FIN DEL BLOQUE DEL ESTUDIANTE
+    # 1. Recorrer todas las llaves de values
+    #1.1 si valor de estado = 0, añadir estado, None a resultado (terminal)
+    # 2. Iterar entre acciones <pN/E/S/W por estado
+    # 3. Añadir a respuesta, estado con la accion optima
+    
+    result = {}
+    for state in values.keys():
+        if values[state] == 0:
+            result[state] = None
+        else:
+            best_action = ''
+            best_action_value = -math.inf
+            for action in mdp.actions():
+                current_action_value = action_value(mdp, state, action, values)
+                if current_action_value > best_action_value:
+                    best_action = action
+                    best_action_value = current_action_value
+            result[state] = best_action
+    return result
+                
+                
+            
+        

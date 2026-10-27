@@ -12,7 +12,6 @@ def normalize(weights: dict) -> dict:
     - Conserve las claves y su orden; no modifique weights.
     - Rechace pesos negativos, no finitos, diccionarios vacíos y suma cero.
     """
-    #TODO: Add your code here
     
     if not weights:
         raise ValueError("Diccionario vacío")
@@ -103,7 +102,3 @@ def best_action(distribution: dict, actions: dict) -> tuple[str, dict]:
         if eu > values[mejor]:
             mejor = accion
     return mejor, values
-    # Validación de las acciones; no modificar.
-    
-    #raise NotImplementedError("Complete este bloque TODO")
-    # FIN DEL BLOQUE DEL ESTUDIANTE
