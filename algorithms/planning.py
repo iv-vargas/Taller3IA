@@ -74,6 +74,30 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
       resultados ya están implementados; no implemente código de interfaz.
     - Al terminar el bloque, values debe contener el nuevo barrido, delta
       su cambio máximo y converged el resultado de delta < tolerance.
+      
+      Uso de la IA:
+      
+      Codigo inicial:
+              copia_values = values.copy()
+              delta = 0
+              for state in mdp.states: 
+                    Qs = []
+                          
+                    for action in mdp.actions(state):
+                        Q = action_value(mdp,state,action,copia_values)
+                        Qs.append(Q)
+                    V = max(Qs)
+                    values[state] = V
+                  
+                  cambio = abs(values[state] - copia_values[state])
+                  delta = max(delta, cambio)
+              converged = delta<tolerance
+    
+    En este codigo no se había tenido en cuenta que al realizar for action in mdp.actions(state) si state es un estado terminal, no tendría acciones asociadas
+    y por ende no se ejecuta el for dejando Qs vacio y retornando un error desde el max(Qs).
+    
+    Para corregirlo se añadió una condición donde si el estado es terminal no se calcula su max(Qs) sino que directamente se mantiene su V en 0.0, mientras que si es un estado no terminal
+    se prosigue con la logica planteada inicialmente.
     """
     # Validación e inicialización desde V0=0.
     if not math.isfinite(tolerance) or tolerance <= 0 or max_iterations < 1:
