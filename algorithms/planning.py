@@ -41,7 +41,7 @@ def action_value(mdp, state, action, values):
     vecinos = mdp.transitions(state,action)
         q = 0 
         for vecino in vecinos:
-            l = vecino[1](mdp.reward(state,action,vecino[0])+mdp.discount*values) En esta linea no logramos identificar que values es un diccionario donde dada cierta posición obtenemos su valor en la iteración previa. 
+            l = vecino[1]*(mdp.reward(state,action,vecino[0])+mdp.discount*values) En esta linea no logramos identificar que values es un diccionario donde dada cierta posición obtenemos su valor en la iteración previa. 
             q+=l
         return q
         
@@ -51,7 +51,7 @@ def action_value(mdp, state, action, values):
     vecinos = mdp.transitions(state,action)
     q = 0 
     for vecino in vecinos:
-        l = vecino[1](mdp.reward(state,action,vecino[0])+mdp.discount*values[(vecino[0])])
+        l = vecino[1]*(mdp.reward(state,action,vecino[0])+mdp.discount*values[(vecino[0])])
         q+=l
     return q
     # FIN DEL BLOQUE DEL ESTUDIANTE
