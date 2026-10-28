@@ -54,9 +54,6 @@ def action_value(mdp, state, action, values):
         l = vecino[1](mdp.reward(state,action,vecino[0])+mdp.discount*values[(vecino[0])])
         q+=l
     return q
-    
-    
-    raise NotImplementedError("Complete este bloque TODO")
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
@@ -84,8 +81,25 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
     values = dict.fromkeys(mdp.states, 0.0)
     history, deltas = [values.copy()], []
     for _ in range(max_iterations):
-        # TODO: Add your code here
-        raise NotImplementedError("Complete este bloque TODO")
+        copia_values = values.copy()
+        delta = 0
+        for state in mdp.states: 
+            
+            if state in mdp.terminals:
+                values[state] = 0.0
+            else:
+                Qs = []
+                    
+                for action in mdp.actions(state):
+                    Q = action_value(mdp,state,action,copia_values)
+                    Qs.append(Q)
+                V = max(Qs)
+                values[state] = V
+            
+            cambio = abs(values[state] - copia_values[state])
+            delta = max(delta, cambio)
+        converged = delta<tolerance
+            
         # FIN DEL BLOQUE DEL ESTUDIANTE
         # Copias para la animación y empaquetado del resultado.
         history.append(values.copy())
