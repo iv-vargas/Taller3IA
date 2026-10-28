@@ -23,8 +23,39 @@ def action_value(mdp, state, action, values):
     - Use mdp.reward(state, action, sucesor) y mdp.discount.
     - No vuelva a sumar la recompensa del terminal en su valor:
       values[terminal] es cero.
+      
+    Uso de la IA:
+    Para el algoritmo nos basamos principalmente en la formula dada para la cual los parametros R(s,a,s´)
+    gamma, y el v(s´) están dados como funciones y diccionario del archivo mdp. 
+    
+    La logica se basa en que mediante mdp.transitions(state,action) podemos saber los pares (sucesor,probabilidad)
+    de cada posible resultado de la acción desde el estado actual.
+    
+    Conociendo estos parametros de los "vecinos" de nuestro estado actual podemos calcular para cada vecino la probabilidad
+    de caer en el multiplicado por la recompensa de inmediata de transitar a este vecino mas el descuento por el valor de ese vecino.
+    Finalmente sumamos cada elemento calculado para obtener el Q (action value function) resultante de ejecutar la acicon dada
+    en el estado dado.
+    
+    Codigo antes de la ayuda de la IA:
+    
+    vecinos = mdp.transitions(state,action)
+        q = 0 
+        for vecino in vecinos:
+            l = vecino[1](mdp.reward(state,action,vecino[0])+mdp.discount*values) En esta linea no logramos identificar que values es un diccionario donde dada cierta posición obtenemos su valor en la iteración previa. 
+            q+=l
+        return q
+        
+    Con ayuda de la IA caimos en cuenta que es necesario pasar como llave la primera posición de la tupla vecino es decir, las coordenadas del vecino.
+
     """
-    # TODO: Add your code here
+    vecinos = mdp.transitions(state,action)
+    q = 0 
+    for vecino in vecinos:
+        l = vecino[1](mdp.reward(state,action,vecino[0])+mdp.discount*values[(vecino[0])])
+        q+=l
+    return q
+    
+    
     raise NotImplementedError("Complete este bloque TODO")
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
