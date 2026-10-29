@@ -23,9 +23,37 @@ def action_value(mdp, state, action, values):
     - Use mdp.reward(state, action, sucesor) y mdp.discount.
     - No vuelva a sumar la recompensa del terminal en su valor:
       values[terminal] es cero.
+      
+    Uso de la IA:
+    Para el algoritmo nos basamos principalmente en la formula dada para la cual los parametros R(s,a,s´)
+    gamma, y el v(s´) están dados como funciones y diccionario del archivo mdp. 
+    
+    La logica se basa en que mediante mdp.transitions(state,action) podemos saber los pares (sucesor,probabilidad)
+    de cada posible resultado de la acción desde el estado actual.
+    
+    Conociendo estos parametros de los "vecinos" de nuestro estado actual podemos calcular para cada vecino la probabilidad
+    de caer en el multiplicado por la recompensa de inmediata de transitar a este vecino mas el descuento por el valor de ese vecino.
+    Finalmente sumamos cada elemento calculado para obtener el Q (action value function) resultante de ejecutar la acicon dada
+    en el estado dado.
+    
+    Codigo antes de la ayuda de la IA:
+    
+    vecinos = mdp.transitions(state,action)
+        q = 0 
+        for vecino in vecinos:
+            l = vecino[1]*(mdp.reward(state,action,vecino[0])+mdp.discount*values) En esta linea no logramos identificar que values es un diccionario donde dada cierta posición obtenemos su valor en la iteración previa. 
+            q+=l
+        return q
+        
+    Con ayuda de la IA caimos en cuenta que es necesario pasar como llave la primera posición de la tupla vecino es decir, las coordenadas del vecino.
+
     """
-    # TODO: Add your code here
-    raise NotImplementedError("Complete este bloque TODO")
+    vecinos = mdp.transitions(state,action)
+    q = 0 
+    for vecino in vecinos:
+        l = vecino[1]*(mdp.reward(state,action,vecino[0])+mdp.discount*values[(vecino[0])])
+        q+=l
+    return q
     # FIN DEL BLOQUE DEL ESTUDIANTE
 
 
@@ -46,6 +74,30 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
       resultados ya están implementados; no implemente código de interfaz.
     - Al terminar el bloque, values debe contener el nuevo barrido, delta
       su cambio máximo y converged el resultado de delta < tolerance.
+      
+      Uso de la IA:
+      
+      Codigo inicial:
+              copia_values = values.copy()
+              delta = 0
+              for state in mdp.states: 
+                    Qs = []
+                          
+                    for action in mdp.actions(state):
+                        Q = action_value(mdp,state,action,copia_values)
+                        Qs.append(Q)
+                    V = max(Qs)
+                    values[state] = V
+                  
+                  cambio = abs(values[state] - copia_values[state])
+                  delta = max(delta, cambio)
+              converged = delta<tolerance
+    
+    En este codigo no se había tenido en cuenta que al realizar for action in mdp.actions(state) si state es un estado terminal, no tendría acciones asociadas
+    y por ende no se ejecuta el for dejando Qs vacio y retornando un error desde el max(Qs).
+    
+    Para corregirlo se añadió una condición donde si el estado es terminal no se calcula su max(Qs) sino que directamente se mantiene su V en 0.0, mientras que si es un estado no terminal
+    se prosigue con la logica planteada inicialmente.
     """
     # Validación e inicialización desde V0=0.
     if not math.isfinite(tolerance) or tolerance <= 0 or max_iterations < 1:
@@ -53,8 +105,25 @@ def value_iteration(mdp, tolerance=1e-8, max_iterations=1000):
     values = dict.fromkeys(mdp.states, 0.0)
     history, deltas = [values.copy()], []
     for _ in range(max_iterations):
-        # TODO: Add your code here
-        raise NotImplementedError("Complete este bloque TODO")
+        copia_values = values.copy()
+        delta = 0
+        for state in mdp.states: 
+            
+            if state in mdp.terminals:
+                values[state] = 0.0
+            else:
+                Qs = []
+                    
+                for action in mdp.actions(state):
+                    Q = action_value(mdp,state,action,copia_values)
+                    Qs.append(Q)
+                V = max(Qs)
+                values[state] = V
+            
+            cambio = abs(values[state] - copia_values[state])
+            delta = max(delta, cambio)
+        converged = delta<tolerance
+            
         # FIN DEL BLOQUE DEL ESTUDIANTE
         # Copias para la animación y empaquetado del resultado.
         history.append(values.copy())
