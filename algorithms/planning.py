@@ -142,26 +142,47 @@ def extract_policy(mdp, values):
     Tips:
     - Reutilice action_value: no basta elegir el vecino de mayor valor.
     - Respete mdp.actions: desempate N, E, S, W conservando el primero.
-    """
-    # 1. Recorrer todas las llaves de values
-    #1.1 si valor de estado = 0, añadir estado, None a resultado (terminal)
-    # 2. Iterar entre acciones <pN/E/S/W por estado
-    # 3. Añadir a respuesta, estado con la accion optima
+    
+    Version Inicial:
     
     result = {}
-    for state in values.keys():
-        if values[state] == 0:
+        for state in values.keys():
+            if values[state] == 0:
+                result[state] = None
+            else:
+                best_action = ''
+                best_action_value = -math.inf
+                for action in mdp.actions():
+                    current_action_value = action_value(mdp, state, action, values)
+                    if current_action_value > best_action_value:
+                        best_action = action
+                        best_action_value = current_action_value
+                result[state] = best_action
+        return result
+        
+    La logica del codigo inicial era correcta pero habian errores en:
+    1. Utilizar mdp.actions ya que no se pasaron los parametros de la funcion
+    2. Deteccion de estados terminales. Un estado con valor 0 no es necesariamente terminal, 
+    en version corregida se usa -in mdp.terminals- para verificar
+        
+        
+    """
+    result = {}
+    for state in mdp.states:
+        if state in mdp.terminals:          
             result[state] = None
-        else:
-            best_action = ''
-            best_action_value = -math.inf
-            for action in mdp.actions():
-                current_action_value = action_value(mdp, state, action, values)
-                if current_action_value > best_action_value:
-                    best_action = action
-                    best_action_value = current_action_value
-            result[state] = best_action
+            continue
+        best_action = None
+        best_action_value = -math.inf
+        for action in mdp.actions(state):   
+            q = action_value(mdp, state, action, values)
+            if q > best_action_value:      
+                best_action = action
+                best_action_value = q
+        result[state] = best_action
     return result
+    
+    
                 
                 
             
